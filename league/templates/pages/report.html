@@ -42,7 +42,7 @@
     <div class="container">
     </br>
         <h3 class="display-4 font-select"> Standings</h3>
-</br>
+    </br>
         <table class="table">
             <thead>
                 <tr>
@@ -77,7 +77,7 @@
         </table>
     </br>
         <h3 class="display-4 font-select"> Player Rankings</h3>
-</br>
+    </br>
         <table class="table">
             <thead>
                 <tr>
@@ -104,7 +104,7 @@
         </table>
     </br>
         <h3 class="display-4 font-select"> Matches</h3>
-</br>
+    </br>
         {% for fixture in fixture_list %}
         {% if fixture.status.statusname == 'Done' %}
         <table class="table">
@@ -141,20 +141,21 @@
                         <th>Team</th>
                         <th>Goal Type</th>
                         <th>Time</th>
-                        <th></th>
-                        <th></th>
+                        {% comment %} <th></th>
+                        <th></th> {% endcomment %}
                     </tr>
                     {% for goal_event in fixture.result.goal_events.all %}
                     <tr>
                         <td>{{goal_event}}</td>
-                        <!-- <td>{{goal_event.goal_event.player.name}}</td>
+                        {% comment %} <td>{{goal_event.player.name}}</td>
                         <td>{{goal_event.assist_player.name}}</td>
-                        <td>{{goal_event.goal_type}}</td>
+                        <td>{{goal_event.goal_type.typename}}</td>
                         <td>{{goal_event.goal_time}}</td>
                         <td></td>
-                        <td></td> -->
+                        <td></td> {% endcomment %}
                     </tr>
                     {% endfor %}
+                </br>
                 </tbody>
         </table>
         {% endif %}
