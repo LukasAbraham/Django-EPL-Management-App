@@ -20,7 +20,6 @@ body {
 }
 
 .icon {
-    width: 40px;
     height: 30px;
     margin-left: 10px;
     justify-content: center;
@@ -34,7 +33,6 @@ body {
 }
 
 .image_insert {
-    width: 25px;
     height: 25px;
     justify-content: center;
 }
@@ -351,3 +349,34 @@ h3.display-4{
     opacity: 1;
 }
 
+.center-image {
+    position: relative;
+    text-align: center;
+}
+
+.center-image img {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.center-image .team-name {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.center-text {
+    text-align: center;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #b5f6bf;
+}

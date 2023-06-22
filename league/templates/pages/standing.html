@@ -42,39 +42,45 @@
     <div class="container">
     </br>
         <h3 class="display-4"> Standings</h3>
-</br>
+    </br>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Matches</th>
-                    <th>Wins</th>
-                    <th>Draws</th>
-                    <th>Loses</th>
-                    <th>Goals</th>
-                    <th>Goals Conceded</th>
-                    <th>Goal Difference</th>
-                    <th>Points</th>
+                    <th class="center-text">Pos</th>
+                    <th></th>
+                    <th>Team</th>
+                    <th class="center-text">MP</th>
+                    <th class="center-text">W</th>
+                    <th class="center-text">D</th>
+                    <th class="center-text">L</th>
+                    <th class="center-text">GF</th>
+                    <th class="center-text">GA</th>
+                    <th class="center-text">GD</th>
+                    <th class="center-text">Pts</th>
                 </tr>
             </thead>
             <tbody>
                 {% for team_stat in ranked_teams %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ team_stat.team.team_name }}</td>
-                    <td>{{ team_stat.wins|add:team_stat.draws|add:team_stat.loses }}</td>
-                    <td>{{ team_stat.wins }}</td>
-                    <td>{{ team_stat.draws }}</td>
-                    <td>{{ team_stat.loses }}</td>
-                    <td>{{ team_stat.goals }}</td>
-                    <td>{{ team_stat.goalsconceded }}</td>
-                    <td>{{ team_stat.goaldifference }}</td>
-                    <td>{{ team_stat.pts }}</td>
+                    <td class="center-text">{{ forloop.counter }}</td>
+                    <td class="center-image">
+                        <img src="{{ team_stat.team.team_image.url }}" height="27px">
+                    </td>
+                    <td>
+                        <b>{{ team_stat.team.team_name }}</b>
+                    </td>
+                    <td class="center-text">{{ team_stat.wins|add:team_stat.draws|add:team_stat.loses }}</td>
+                    <td class="center-text">{{ team_stat.wins }}</td>
+                    <td class="center-text">{{ team_stat.draws }}</td>
+                    <td class="center-text">{{ team_stat.loses }}</td>
+                    <td class="center-text">{{ team_stat.goals }}</td>
+                    <td class="center-text">{{ team_stat.goalsconceded }}</td>
+                    <td class="center-text">{{ team_stat.goaldifference }}</td>
+                    <td class="center-text"><b>{{ team_stat.pts }}</b></td>
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table>     
     </br>
         <button onclick="location.href='/league'" class="btn btn-secondary">Go back</button>
     </div>
