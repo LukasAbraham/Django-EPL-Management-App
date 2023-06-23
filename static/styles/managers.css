@@ -276,3 +276,9 @@ h3.display-4{
     font-weight: 600;
     font-size: 50px;
 }
+
+.card-bg {
+    background-image: url('../../static/images/bg_2.jpg');
+    background-size: cover;
+    background-position: center;
+}

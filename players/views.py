@@ -8,11 +8,13 @@ from login.models import Player,Team
 def index(request):
     form = PlayerSearchForm(request.GET)
     player_list = Player.objects.select_related('team').all()
+    highlight_players = [player_list[index] for index in [1, 10, 18, 20, 24]]
     team_list = Team.objects.all()
     username = request.user.username
     context = {
         'username': username,
         'team_list': team_list,
+        'highlight_players': highlight_players,
         'player_list': player_list,
         'form': form,
     }

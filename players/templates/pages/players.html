@@ -50,26 +50,25 @@
             </form>
         </div>
     </br></br>
-        <h3 class="display-4"> Top Scorers </h2>
+        <h3 class="display-4"> Highlight Players </h2>
         </br>
         <div class="container-fluid bg-light">
-              <div class="row">
-                    {% for player in player_list|slice:":4" %}
-                      <div class='col-md-6 col-sm-12 col-lg-3' style="padding-bottom:40px">
-                      <div class="card" style="width: 14rem; ">
-            
+            <div class="row">
+                {% for player in highlight_players|slice:":4" %}
+                    <div class='col-md-6 col-sm-12 col-lg-3' style="padding-bottom:40px">
+                    <div class="card" style="width: 14rem; background-image: url('{% static 'images/bg_1.png' %}'); background-size: cover;">
                         <img class="card-img-top" src="{{player.image.url}}" alt="">
                         <div class="card-body">
                             <p class="font-weight-bold">{{player.name}}</p>
                             <p class="item-price">Goals: {{player.player_stat.numberofgoals}}</p>
                         <p class="item-price">Assists: {{player.player_stat.numberofassists}}</p>
                             <a href="{% url 'show-player' player_id=player.playerid %}" class="btn btn-primary">View</a>
-                          </div>
-                      </div>
-                      </div>
-                    {% endfor %}
+                        </div>
                     </div>
-                </div>
+                    </div>
+                {% endfor %}
+            </div>         
+        </div>            
             </br></br>
         <h3 class="display-4"> Players</h3>
         </br>

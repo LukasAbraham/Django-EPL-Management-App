@@ -50,8 +50,48 @@
             </form>
         </div>
     </br>
+    <div class="bg-dark py-2">
+        <h3 class="display-4 text-white text-center mb-0">Manager of the month</h3>
+    </div>
+    {% for coach in coach_list|slice:":1" %}
+    <div class="jumbotron">
+    <div class="col-md-6 mx-auto">
+        <div class="card mb-3 card-bg h-100" style="max-width: 540px;">
+          <div class="row no-gutters">
+            <div class="col-md-4 mt-5">
+              <img src="{{ coach.coach_image.url }}" class="card-img" alt="">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body text-white">
+                <h4 class="card-title font-weight-bold">{{ coach.coach_name }}</h4>
+                <div class="d-flex align-items-center mb-3">
+                  <img src="{{ coach.team.team_image.url }}" class="card-logo-img img-fluid mr-2" height="30px" width="30px" alt="">
+                  <p class="mb-0">{{ coach.team.team_name }}</p>
+                </div>
+                <p class="card-text">Games: {{ coach.team.team_stat.wins|add:coach.team.team_stat.draws|add:coach.team.team_stat.loses }}</p>
+                <div class="d-flex">
+                    <p class="card-text mr-4">GF: {{ coach.team.team_stat.goals }}</p>
+                    <p class="card-text">GA: {{ coach.team.team_stat.goalsconceded }}</p>
+                  </div>
+                  <div class="d-flex">
+                    <p class="card-text mr-4">Wins: {{ coach.team.team_stat.wins }}</p>
+                    <p class="card-text mr-4">Draws: {{ coach.team.team_stat.draws }}</p>
+                    <p class="card-text">Losses: {{ coach.team.team_stat.loses }}</p>
+                  </div>                 
+              </div>
+            </div>
+            <div class="d-flex align-items-center mb-0">
+              <img src="{% static 'images/MOTM_award.png' %}" class="card-logo-img img-fluid mr-2" height="25px" width="25px" alt="">
+              <p class="card-text"><small class="text-white">MOTM award</small></p>
+            </div>
+          </div>
+        </div>
+      </div>      
+    </div>
+    {% endfor %} 
+    </br>
         <h3 class="display-4"> Managers</h3>
-</br>
+    </br>
         {% for coach in coach_list %}
         <div class="card">
             <div class="card-header">

@@ -166,7 +166,7 @@
                         <img class="card-img-top" src="{{club.team.team_image.url}}" alt="">
                         <div class="card-body">
                           <p class="font-weight-bold">{{club.team.team_name}}</p>
-                          <p class="item-price">points: {{club.team.pts}}</p>
+                          <p class="item-price">Points: {{club.team.team_stat.pts}}</p>
                           <form method="POST" action="{% url 'show-team' %}">
                             {% csrf_token %}
                             <input type="hidden" name="teamid" value="{{club.team.teamid}}">

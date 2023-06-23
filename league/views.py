@@ -77,13 +77,15 @@ def standing(request):
 def stat_record(request):
     players_stat = Player_Stat.objects.all()
 
-    ranked_players = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_goals = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_assists = sorted(players_stat, key=lambda player_stat: (player_stat.numberofassists),reverse=True)
     username = request.user.username
     user = request.user
     team_list = Team.objects.all()
     context = {
         'username': username,
-        'ranked_players': ranked_players,
+        'top_scorers': sorted_players_by_goals,
+        'top_playmakers': sorted_players_by_assists,
         'team_list': team_list,
         'user': user,
     }

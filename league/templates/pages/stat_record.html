@@ -38,35 +38,150 @@
         <li><a href="/managers">Managers</a></li>
         <li><a href="/league">League</a></li>
         </ul>
-    </div>
+    </div>    
     <div class="container">
     </br>
-        <h3 class="display-4"> Player Rankings</h3>
-</br>
-        <table class="table">
+    <div class="bg-primary py-2">
+        <h3 class="display-4 text-white text-center mb-0">Goals</h3>
+    </div>
+    <div class="row">
+        {% for player_stat in top_scorers|slice:":2" %}
+        <div class="col-md-6">
+          <div class="card mb-3 card-bg-2 h-100" style="max-width: 540px;">
+            <div class="row no-gutters">
+              <div class="col-md-4 mt-3">
+                <img src="{{player_stat.player.image.url}}" class="card-img" alt="">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body text-white">
+                  <h5 class="card-title font-weight-bold">{{player_stat.player.name}}</h5>
+                  <div class="d-flex align-items-center mb-3">
+                    <img src="{{player_stat.player.team.team_image.url}}" class="card-logo-img img-fluid mr-2" height="30px" width="30px" alt="">
+                    <p class="mb-0">{{player_stat.player.team.team_name}}</p>
+                  </div>
+                  <p class="card-text">Appearances: {{player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses}}</p>
+                  <p class="card-text">Goals: {{player_stat.numberofgoals}}</p>
+                </div>
+            </div>
+            {% if forloop.first %}
+            <div class="d-flex align-items-center mb-0 mt-3">
+              <img src="{% static 'images/golden_boot.png' %}" class="card-logo-img img-fluid mr-2" height="55px" width="55px" alt="">
+              <p class="card-text"><small class="text-white">Golden Boot award</small></p>
+            </div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+        <hr class="featurette-divider">
+        <div class="bg-info py-2">
+            <h3 class="display-4 text-white text-center mb-0">Assists</h3>
+        </div>
+        <div class="row">
+        {% for player_stat in top_playmakers|slice:":2" %}
+        <div class="col-md-6">
+          <div class="card mb-3 card-bg-1 h-100" style="max-width: 540px;">
+            <div class="row no-gutters">
+              <div class="col-md-4 mt-3">
+                <img src="{{player_stat.player.image.url}}" class="card-img" alt="">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body text-white">
+                  <h5 class="card-title font-weight-bold">{{player_stat.player.name}}</h5>
+                  <div class="d-flex align-items-center mb-3">
+                    <img src="{{player_stat.player.team.team_image.url}}" class="card-logo-img img-fluid mr-2" height="30px" width="30px" alt="">
+                    <p class="mb-0">{{player_stat.player.team.team_name}}</p>
+                  </div>
+                  <p class="card-text">Appearances: {{player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses}}</p>
+                  <p class="card-text">Assists: {{player_stat.numberofassists}}</p>
+                </div>
+            </div>
+            {% if forloop.first %}
+            <div class="d-flex align-items-center mb-0 mt-3">
+              <img src="{% static 'images/playmaker_award.png' %}" class="card-logo-img img-fluid mr-2" height="55px" width="55px" alt="">
+              <p class="card-text"><small class="text-white">Playmaker award</small></p>
+            </div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    </br>
+    <hr class="featurette-divider">
+    <div class="container">
+        <h3 class="display-4">Top Goalscorers</h3>
+        </br>
+        <div class="text-center">
+            <button class="btn btn-warning button-left" type="button" data-toggle="collapse" data-target="#goalscorersTable" aria-expanded="true" aria-controls="goalscorersTable">
+                Expand/Collapse All
+            </button>
+        </div>
+        <div id="goalscorersTable" class="collapse">
+        </br>
+          <table class="table">
             <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Team</th>
-                    <th>Position</th>
-                    <th>Goals</th>
-                    <th>Assists</th>
-                </tr>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Team</th>
+                <th>Appearances</th>
+                <th>Position</th>
+                <th>Goals</th>
+              </tr>
             </thead>
             <tbody>
-                {% for player_stat in ranked_players %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ player_stat.player.name }}</td>
-                    <td>{{ player_stat.player.team }}</td>
-                    <td>{{ player_stat.player.position }}</td>
-                    <td>{{ player_stat.numberofgoals }}</td>
-                    <td>{{ player_stat.numberofassists }}</td>
-                </tr>
-                {% endfor %}
+              {% for player_stat in top_scorers %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ player_stat.player.name }}</td>
+                <td>{{ player_stat.player.team }}</td>
+                <td>{{ player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses }}</td>
+                <td>{{ player_stat.player.position }}</td>
+                <td>{{ player_stat.numberofgoals }}</td>
+              </tr>
+              {% endfor %}
             </tbody>
-        </table>
+          </table>
+        </div>
+        </br>
+        <hr class="featurette-divider">
+        <h3 class="display-4">Top Playmakers</h3>
+        </br>
+        <div class="text-center">
+            <button class="btn btn-warning button-left" type="button" data-toggle="collapse" data-target="#playmakersTable" aria-expanded="true" aria-controls="playmakersTable">
+                Expand/Collapse All
+            </button>
+        </div>
+        <div id="playmakersTable" class="collapse">
+        </br>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Team</th>
+                <th>Appearances</th>
+                <th>Position</th>
+                <th>Assists</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for player_stat in top_playmakers %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ player_stat.player.name }}</td>
+                <td>{{ player_stat.player.team }}</td>
+                <td>{{ player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses }}</td>
+                <td>{{ player_stat.player.position }}</td>
+                <td>{{ player_stat.numberofassists }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </br>
         <button onclick="location.href='/league'" class="btn btn-secondary">Go back</button>
     </div>

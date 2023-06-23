@@ -380,3 +380,15 @@ h3.display-4{
 .table tbody tr:hover {
     background-color: #b5f6bf;
 }
+
+.card-bg-1 {
+    background-image: url('../../static/images/bg_3.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.card-bg-2 {
+    background-image: url('../../static/images/bg_4.jpg');
+    background-size: cover;
+    background-position: center;
+}
