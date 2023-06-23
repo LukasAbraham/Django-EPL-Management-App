@@ -3,9 +3,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <div class = "left">
-      <img src = "{% static 'images/v1_21.png' %}" class="image" alt="Image">
-  </div>
+  <div class="left" style="background-image: url('{% static 'images/v1_21.png' %}');"></div>
   <div class = "right">
     {% if messages %}
     {% for message in messages %}
