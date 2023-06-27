@@ -50,32 +50,43 @@
             </form>
         </div>
         {% if players %}
+    </br>
         <h3 class="display-4 font-select"> Players</h3>
+    </br>
         {% for player in players %}
         <div class="card">
             <div class="card-header">
-                <span class="font-weight-bold">{{player.name}}</span>
-                <span class="text-success font-weight-bold"> Team: {{ player.team.team_name}}</span>
-                <span class="float-right text-info">
-                    <form method="POST" action="{% url 'show-player' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="playerid" value="{{player.playerid}}">
-                        <input type="submit" value="Detail" class="btn btn-primary">
-                    </form>
-                </span>
+                <span><img src="{{player.image.url}}" style="height:50px; width:50px; "></span>
+                <a href="{% url 'show-player' player_id=player.playerid %}">
+                    <span class="font-weight-bold">{{player.name}}</span>
+                </a>
+                <span class="text-success font-weight-bold"> from: {{ player.team.team_name}}</span>
+                {% if user.user_profile.user_type == 'organizer' %}
+                <span class="float-right text-info ml-2"><button onclick="playerconfirmDelete('{{ player.playerid }}')" class="btn btn-secondary">Remove</button></span>
+                <span class="float-right text-info ml-3"><button onclick="location.href='{% url 'edit-player' player_id=player.playerid %}'" class="btn btn-secondary">Edit</button></span>
+                {% endif %}
             </div>
             <br/>
         </div>
         {% endfor %}
         {% else %}
+    </br>
         <h3 class="display-4 font-select"> No players found.</h3>
         {% endif %}
+    </br>
         {% if user.user_profile.user_type == 'organizer' %}
         <div class="add-player text-center">
             <button onclick="location.href='{% url 'add-player' %}'" class="btn btn-primary">Add Player</button>
         </div>
         {% endif %}
     </div>
+    <script>
+        function playerconfirmDelete(playerId) {
+            if (confirm("Are you confirm to remove this player?")) {
+                location.href = "/players/player/delete/" + playerId + "/";
+            }
+        }
+    </script>
 {% else %} 
     <script>
         window.location.replace("/login/");

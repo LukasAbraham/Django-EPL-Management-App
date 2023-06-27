@@ -3,116 +3,155 @@
 {% block title %}Report{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h3 class="display-4 font-select"> Standings</h3>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        vertical-align: middle;
+        }
+</style>
+
+<div class="container" style="text-align: center">
+</br>
+    <h3 style="font-size: 22px"> Standings</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Matches</th>
-                <th>Wins</th>
-                <th>Draws</th>
-                <th>Loses</th>
-                <th>Goals</th>
-                <th>Goals Conceded</th>
-                <th>Goal Difference</th>
-                <th>Points</th>
+                <th></br>Rank</th>
+                <th></br>Name</th>
+                <th></br>Matches</th>
+                <th></br>Wins</th>
+                <th></br>Draws</th>
+                <th></br>Loses</th>
+                <th></br>Goals</th>
+                <th></br>Goals Conceded</th>
+                <th></br>Goal Difference</th>
+                <th></br>Points</th>
             </tr>
         </thead>
         <tbody>
             {% for team_stat in ranked_teams %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ team_stat.team.team_name }}</td>
-                <td>{{ team_stat.wins|add:team_stat.draws|add:team_stat.loses }}</td>
-                <td>{{ team_stat.wins }}</td>
-                <td>{{ team_stat.draws }}</td>
-                <td>{{ team_stat.loses }}</td>
-                <td>{{ team_stat.goals }}</td>
-                <td>{{ team_stat.goalsconceded }}</td>
-                <td>{{ team_stat.goaldifference }}</td>
-                <td>{{ team_stat.pts }}</td>
+                <td></br>{{ forloop.counter }}</td>
+                <td></br>{{ team_stat.team.team_name }}</td>
+                <td></br>{{ team_stat.wins|add:team_stat.draws|add:team_stat.loses }}</td>
+                <td></br>{{ team_stat.wins }}</td>
+                <td></br>{{ team_stat.draws }}</td>
+                <td></br>{{ team_stat.loses }}</td>
+                <td></br>{{ team_stat.goals }}</td>
+                <td></br>{{ team_stat.goalsconceded }}</td>
+                <td></br>{{ team_stat.goaldifference }}</td>
+                <td></br>{{ team_stat.pts }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h3 class="display-4 font-select"> Player Rankings</h3>
+</br>
+<hr class="featurette-divider">
+    <h3 style="font-size: 22px"> Top scorers</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Team</th>
-                <th>Position</th>
-                <th>Goals</th>
-                <th>Assists</th>
+                <th></br>Rank</th>
+                <th></br>Name</th>
+                <th></br>Team</th>
+                <th></br>Position</th>
+                <th></br>Appearances</th>
+                <th></br>Goals</th>
             </tr>
         </thead>
         <tbody>
-            {% for player_stat in ranked_players %}
+            {% for player_stat in top_scorers %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ player_stat.player.name }}</td>
-                <td>{{ player_stat.player.team }}</td>
-                <td>{{ player_stat.player.position }}</td>
-                <td>{{ player_stat.numberofgoals }}</td>
-                <td>{{ player_stat.numberofassists }}</td>
+                <td></br>{{ forloop.counter }}</td>
+                <td></br>{{ player_stat.player.name }}</td>
+                <td></br>{{ player_stat.player.team }}</td>
+                <td></br>{{ player_stat.player.position }}</td>
+                <td></br>{{ player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses }}</td>
+                <td></br>{{ player_stat.numberofgoals }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h3 class="display-4 font-select"> Matches</h3>
+</br>
+<hr class="featurette-divider">
+<h3 style="font-size: 22px"> Top playmakers</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th></br>Rank</th>
+            <th></br>Name</th>
+            <th></br>Team</th>
+            <th></br>Position</th>
+            <th></br>Appearances</th>
+            <th></br>Assists</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player_stat in top_playmakers %}
+        <tr>
+            <td></br>{{ forloop.counter }}</td>
+            <td></br>{{ player_stat.player.name }}</td>
+            <td></br>{{ player_stat.player.team }}</td>
+            <td></br>{{ player_stat.player.position }}</td>
+            <td></br>{{ player_stat.player.team.team_stat.wins|add:player_stat.player.team.team_stat.draws|add:player_stat.player.team.team_stat.loses }}</td>
+            <td></br>{{ player_stat.numberofassists }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</br>
+<hr class="featurette-divider">
+    <h3 style="font-size: 22px"> Matches</h3>
+<table class="table">
     {% for fixture in fixture_list %}
-    <table class="table">
+    {% if fixture.status.statusname == 'Done' %}
             <thead>
                 <tr>
-                    <th>Team 1</th>
-                    <th>Result</th>
-                    <th>Team 2</th>
-                    <th>Round</th>
-                    <th>Stadium</th>
-                    <th>Time</th>
+                    <th></br>Team 1</th>
+                    <th></br>Result</th>
+                    <th></br>Team 2</th>
+                    <th></br>Round</th>
+                    <th></br>Stadium</th>
+                    <th colspan="2"></br>Time</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{fixture.team1}}</td>
-                    <td>{{fixture.result.team1pts}}-{{fixture.result.team2pts}}</td>
-                    <td>{{fixture.team2}}</td>
-                    <td>{{fixture.round_name}}</td>
-                    <td>{{fixture.stadium}}</td>
-                    <td>{{fixture.time}}</td>
+                    <td></br><b>{{fixture.team1}}</b></td>
+                    <td></br><b>{{fixture.result.team1pts}}-{{fixture.result.team2pts}}</b></td>
+                    <td></br><b>{{fixture.team2}}</b></td>
+                    <td></br><b>{{fixture.round_name}}</b></td>
+                    <td></br><b>{{fixture.stadium}}</b></td>
+                    <td colspan="2"></br><b>{{fixture.time}}</b></td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <th>Goal Events</th>
-                    <td></td>
-                    <td></td>
+                    <td colspan="7"></br><b>Goal Events</b></td>
                 </tr>
                 <tr>
-                    <th>Scorer</th>
-                    <th>Assist</th>
-                    <th>Team</th>
-                    <th>Goal Type</th>
-                    <th>Time</th>
-                    <th></th>
+                    <th colspan="2"></br>Scorer</th>
+                    <th colspan="2"></br>Assist</th>
+                    <th></br>Team</th>
+                    <th></br>Goal Type</th>
+                    <th></br>Time</th>
                 </tr>
-                {% for goal_event in fixture.result.goal_events.all %}
-                <tr>
-                    <td>{{goal_event}}</td>
-                    <!-- <td>{{goal_event.goal_event.player.name}}</td>
-                    <td>{{goal_event.assist_player.name}}</td>
-                    <td>{{goal_event.goal_type}}</td>
-                    <td>{{goal_event.goal_time}}</td>
-                    <td></td>
-                    <td></td> -->
-                </tr>
-                {% endfor %}
-            </tbody>
-    </table>
-    {% endfor %}
+                {% for fixture_id, goal_events in fixture_goal_events.items %}
+                {% if fixture_id == fixture.fixtureid %}
+                    {% for goal_event in goal_events %}
+                    <tr>
+                        <td colspan="2"></br>{{goal_event.player.name}}</td>
+                        <td colspan="2"></br>{{goal_event.assist_player.name}}</td>
+                        <td></br>{{goal_event.player.team}}</td>
+                        <td></br>{{goal_event.goal_type}}</td>
+                        <td></br>{{goal_event.goal_time}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+                    <tr style="background-color: #FFFFFF"><td colspan="7"><br></td></tr>
+                </tbody>
+                {% endif %}
+            {% endfor %}
+        </table>
+</br>
 </div>
 {% endblock %}

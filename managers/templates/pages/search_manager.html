@@ -55,15 +55,16 @@
         
         <div class="card">
             <div class="card-header">
-                <span class="font-weight-bold">{{coach.coach_name}}</span>
+                <span><img src="{{coach.coach_image.url}}" style="height:50px; width:50px; "></span>
+                &nbsp;
+                <a href="{% url 'show-coach' coach_id=coach.coachid %}">
+                    <span class="font-weight-bold">{{coach.coach_name}}</span>
+                </a>
                 <span class="text-success font-weight-bold"> Team: {{ coach.team.team_name}}</span>
-                <span class="float-right text-info">
-                    <form method="POST" action="{% url 'show-coach' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="coachid" value="{{coach.coachid}}">
-                        <input type="submit" value="Detail" class="btn btn-primary">
-                    </form>
-                </span>
+                {% if user.user_profile.user_type == 'organizer' %}
+                <span class="float-right text-info ml-2"><button onclick="managerconfirmDelete('{{ coach.coachid }}')" class="btn btn-secondary">Remove</button></span>
+                <span class="float-right text-info ml-3"><button onclick="location.href='{% url 'edit-coach' coach_id=coach.coachid %}'" class="btn btn-secondary">Edit</button></span>
+                {% endif %}
             </div>
             <br/>
         </div>

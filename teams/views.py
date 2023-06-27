@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import TeamForm, PlayerForm, CoachForm, TeamSearchForm
 from login.models import Team, Player, Coach, Regulation
-from django.core.exceptions import ObjectDoesNotExist
+import re
 
 # Create your views here.
 def update_all_teams_status():
@@ -175,7 +175,7 @@ def search_team(request):
     teams = None
     if form.is_valid():
         team_name = form.cleaned_data['team_name']
-        teams = Team.objects.filter(team_name=team_name)
+        teams = Team.objects.filter(team_name__iregex=r'^.*{}.*$'.format(re.escape(team_name)))
     user = request.user
     username = request.user.username
     team_list = Team.objects.all()

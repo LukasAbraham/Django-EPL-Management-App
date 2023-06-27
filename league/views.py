@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from login.models import Team, Regulation, Team_Stat, Player_Stat, Fixture, Result, GoalEvent
 from .forms import RegulationForm
 from django.template.loader import get_template
-from django.template import Context
 from io import BytesIO
 from xhtml2pdf import pisa
+from django.core.exceptions import ObjectDoesNotExist
 # from reportlab.pdfgen import canvas
 # Create your views here.
 def index(request):
@@ -93,20 +93,32 @@ def stat_record(request):
 
 def report(request):
     fixture_list = Fixture.objects.all()
+    fixture_goal_events = {}
+    for fixture in fixture_list:
+        try:
+            result = Result.objects.get(fixture_id=fixture.fixtureid)
+            goal_events = GoalEvent.objects.filter(result=result)
+        except ObjectDoesNotExist:
+            result = None
+            goal_events = None
+        fixture_goal_events[fixture.fixtureid]=goal_events
     teams_stat = Team_Stat.objects.all()
     ranked_teams = sorted(teams_stat, key=lambda team_stat: (team_stat.pts, team_stat.goals - team_stat.goalsconceded,team_stat.awaygoals),reverse=True)
     players_stat = Player_Stat.objects.all()
-    ranked_players = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_goals = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_assists = sorted(players_stat, key=lambda player_stat: (player_stat.numberofassists),reverse=True)
     username = request.user.username
     user = request.user
     team_list = Team.objects.all()
     context = {
         'username': username,
-        'ranked_players': ranked_players,
+        'top_scorers': sorted_players_by_goals,
+        'top_playmakers': sorted_players_by_assists,
         'fixture_list': fixture_list,
         'team_list': team_list,
         'user': user,
         'ranked_teams': ranked_teams,
+        'fixture_goal_events': fixture_goal_events,
     }
     return render(request, 'pages/report.html',context)
 
@@ -117,14 +129,26 @@ def export_to_pdf(request):
     # Vẽ nội dung vào file PDF
     template = get_template('pages/report_pdf.html')
     fixture_list = Fixture.objects.all()
+    fixture_goal_events = {}
+    for fixture in fixture_list:
+        try:
+            result = Result.objects.get(fixture_id=fixture.fixtureid)
+            goal_events = GoalEvent.objects.filter(result=result)
+        except ObjectDoesNotExist:
+            result = None
+            goal_events = None
+        fixture_goal_events[fixture.fixtureid]=goal_events
     teams_stat = Team_Stat.objects.all()
     ranked_teams = sorted(teams_stat, key=lambda team_stat: (team_stat.pts, team_stat.goals - team_stat.goalsconceded,team_stat.awaygoals),reverse=True)
     players_stat = Player_Stat.objects.all()
-    ranked_players = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_goals = sorted(players_stat, key=lambda player_stat: (player_stat.numberofgoals),reverse=True)
+    sorted_players_by_assists = sorted(players_stat, key=lambda player_stat: (player_stat.numberofassists),reverse=True)
     context = {
-        'ranked_players': ranked_players,
+        'top_scorers': sorted_players_by_goals,
+        'top_playmakers': sorted_players_by_assists,
         'fixture_list': fixture_list,
         'ranked_teams': ranked_teams,
+        'fixture_goal_events': fixture_goal_events,
     }
     html = template.render(context)
     # Chuyển đổi HTML thành PDF và lưu vào buffer

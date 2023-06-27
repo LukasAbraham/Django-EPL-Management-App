@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import PlayerForm, PlayerSearchForm
 from login.models import Player,Team
+import re
 # Create your views here.
 def index(request):
     form = PlayerSearchForm(request.GET)
@@ -98,7 +99,7 @@ def search_player(request):
     players = None
     if form.is_valid():
         player_name = form.cleaned_data['player_name']
-        players = Player.objects.filter(name=player_name)
+        players = Player.objects.filter(name__iregex=r'^.*{}.*$'.format(re.escape(player_name)))
     username = request.user.username
     user = request.user
     team_list = Team.objects.all()

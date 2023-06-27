@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from login.models import Team, Fixture, Round, Result, GoalEvent, Team_Stat, Player, Regulation, Status
+from login.models import Team, Fixture, Round, Result, GoalEvent, Player, Regulation, Status
 from .forms import MatchForm, FixtureFormSet, RoundNameForm, RecordResultForm, GoalEventForm
 from django.utils import timezone
 from django.forms import formset_factory
@@ -17,6 +17,7 @@ def index(request):
         else:
             fixture.status = Status.objects.get(statusname='Upcoming')
         fixture.save()
+    fixture_list = fixture_list.order_by('-time')
     username = request.user.username
     user = request.user
     context = {
@@ -33,6 +34,7 @@ def logout_user(request):
 
 def schedule_form(request):
     submitted = False
+    selected_teams = []
     if request.method == 'POST':
         formset = FixtureFormSet(request.POST)
         round_name_form = RoundNameForm(request.POST)
@@ -45,11 +47,15 @@ def schedule_form(request):
                 team2 = form.cleaned_data['team2']
                 if team1.status == 'NotMeetRequirement' or team2.status == 'NotMeetRequirement':
                     continue
-                team = Team.objects.get(team_name=form.cleaned_data['team1'])
-                fixture = form.save(commit=False)
-                fixture.round_name = round_instance
-                fixture.stadium = team.stadium
-                fixture.save()
+                form.clean(selected_teams=selected_teams)
+                if form.is_valid():
+                    team = Team.objects.get(team_name=team1.team_name)
+                    fixture = form.save(commit=False)
+                    fixture.round_name = round_instance
+                    fixture.stadium = team.stadium
+                    fixture.save()
+                selected_teams.append(team1)
+                selected_teams.append(team2)
             return HttpResponseRedirect('/matches')
     else:
         formset = FixtureFormSet()
@@ -100,6 +106,21 @@ def add_scores(request, fixture_id):
 
 def edit_fixture(request, fixture_id):
     fixture = get_object_or_404(Fixture, pk=fixture_id)
+    if fixture.status != 'Upcoming':
+        regulation = Regulation.objects.get(pk=1)
+        try:
+            result = Result.objects.get(fixture=fixture)
+            result.remove_team_scores(winpts=regulation.winpts, losepts=regulation.losepts, drawpts=regulation.drawpts)
+            goal_events = GoalEvent.objects.filter(result=result)
+            for goal_event in goal_events:
+                if goal_event.goal_type.typename != 'Own Goal':
+                    if goal_event.player and goal_event.assist_player and goal_event.player == goal_event.assist_player:
+                        goal_event.player.player_stat.numberofassists += 1
+                    goal_event.remove_player_stats()
+            result.delete()
+        except ObjectDoesNotExist:
+            pass
+
     if request.method == 'POST':
         form = MatchForm(request.POST, instance=fixture)
         if form.is_valid():
@@ -107,6 +128,7 @@ def edit_fixture(request, fixture_id):
             return redirect('/matches')
     else:
         form = MatchForm(instance=fixture)
+
     username = request.user.username
     user = request.user
     team_list = Team.objects.all()
@@ -121,6 +143,18 @@ def edit_fixture(request, fixture_id):
 
 def remove_fixture(request, fixture_id):
     fixture = get_object_or_404(Fixture, pk=fixture_id)
+    regulation = Regulation.objects.get(pk=1)
+    try:
+        result = Result.objects.get(fixture=fixture)
+        result.remove_team_scores(winpts=regulation.winpts,losepts=regulation.losepts,drawpts=regulation.drawpts)
+        goal_events = GoalEvent.objects.filter(result=result)
+        for goal_event in goal_events:
+            if goal_event.goal_type.typename != 'Own Goal':
+                if goal_event.player and goal_event.assist_player and goal_event.player == goal_event.assist_player:
+                    goal_event.player.player_stat.numberofassists += 1
+                goal_event.remove_player_stats()
+    except ObjectDoesNotExist:
+        pass
     fixture.delete()
     return redirect('/matches')
 
@@ -137,7 +171,7 @@ def record_result(request, fixture_id):
                     goal_event.result = result
                     goal_event.team = result.fixture.team1 if goal_event.player.team == result.fixture.team1 else result.fixture.team2
                     goal_event.save()
-                    if goal_event.goal_type != 'Own Goal':
+                    if goal_event.goal_type.typename != 'Own Goal':
                         goal_event.update_player_stats()
             return redirect('/matches') # Đổi thành URL mong muốn
     else:

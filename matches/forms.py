@@ -5,7 +5,7 @@ from django.forms import widgets
 from django.utils import timezone
 import datetime
 from django.core.exceptions import ValidationError
-from django.forms import formset_factory, BaseFormSet
+from django.forms import formset_factory
 # Create a Player form
 
 class GoalEventForm(forms.ModelForm):
@@ -23,7 +23,7 @@ class GoalEventForm(forms.ModelForm):
         assist_player = cleaned_data.get('assist_player')
         goal_type = cleaned_data.get('goal_type')
         
-        if player and assist_player and player == assist_player and goal_type != 'Own Goal':
+        if player and assist_player and player == assist_player and goal_type.typename != 'Own Goal':
             player.player_stat.numberofassists -= 1
         return cleaned_data
 
@@ -39,7 +39,7 @@ class RoundNameForm(ModelForm):
         model = Round
         fields = "__all__"
 
-class MatchForm(ModelForm):
+class MatchForm(forms.ModelForm):
     class Meta:
         model = Fixture
         fields = "__all__"
@@ -55,15 +55,20 @@ class MatchForm(ModelForm):
         self.fields['team1'].queryset = Team.objects.filter(status='MeetRequirements')
         self.fields['team2'].queryset = Team.objects.filter(status='MeetRequirements')
     
-    def clean(self):
+    def clean(self, selected_teams = None):
         cleaned_data = super().clean()
         team1 = cleaned_data.get('team1')
         team2 = cleaned_data.get('team2')
         time = cleaned_data.get('time')
-
-        if team1 and team2 and team1 == team2:
-            raise ValidationError("Team 1 and Team 2 cannot be the same.")
-        
+        if team1 and team2:
+            if team1 == team2:
+                self.add_error('team1', forms.ValidationError("Team 1 and Team 2 cannot be the same."))
+                self.add_error('team2', forms.ValidationError("Team 1 and Team 2 cannot be the same."))
+            if selected_teams is not None:
+                if team1 in selected_teams:
+                    raise ValidationError("Team 1 has already existed.")
+                if team2 in selected_teams:
+                    raise ValidationError("Team 2 has already existed.")
         if time:
             if time < timezone.now():
                 cleaned_data['status'] = Status.objects.get(statusname='Done')

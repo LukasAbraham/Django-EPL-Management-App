@@ -73,7 +73,7 @@ class Team_Stat(models.Model):
     goals = models.PositiveIntegerField(default = 0)
     goalsconceded = models.PositiveIntegerField(default = 0)
     goaldifference = models.IntegerField(default = 0)
-    awaygoals = models.PositiveIntegerField(default = 0)
+    awaygoals = models.IntegerField(default = 0)
     wins = models.PositiveIntegerField(default = 0)
     loses = models.PositiveIntegerField(default = 0)
     draws = models.PositiveIntegerField(default = 0)
@@ -207,7 +207,35 @@ class Result(models.Model):
         self.fixture.team1.team_stat.goaldifference = self.fixture.team1.team_stat.goals - self.fixture.team1.team_stat.goalsconceded
         self.fixture.team2.team_stat.goaldifference = self.fixture.team2.team_stat.goals - self.fixture.team2.team_stat.goalsconceded
         self.fixture.team1.team_stat.save()
-        self.fixture.team2.team_stat.save()  
+        self.fixture.team2.team_stat.save() 
+    def remove_team_scores(self, winpts, drawpts, losepts):
+        if self.team1pts > self.team2pts:
+            self.fixture.team1.team_stat.wins -= 1
+            self.fixture.team2.team_stat.loses -= 1
+            self.fixture.team1.team_stat.pts -= winpts
+            self.fixture.team2.team_stat.pts -= losepts
+        elif self.team1pts < self.team2pts:
+            self.fixture.team1.team_stat.loses -= 1
+            self.fixture.team2.team_stat.wins -= 1
+            self.fixture.team2.team_stat.pts -= winpts
+            self.fixture.team1.team_stat.pts -= losepts
+        else:
+            self.fixture.team1.team_stat.draws -= 1
+            self.fixture.team2.team_stat.draws -= 1
+            self.fixture.team1.team_stat.pts -= drawpts
+            self.fixture.team2.team_stat.pts -= drawpts
+        if self.fixture.stadium != self.fixture.team1.stadium:
+            self.fixture.team1.team_stat.awaygoals -= self.team1pts
+        if self.fixture.stadium != self.fixture.team2.stadium:
+            self.fixture.team2.team_stat.awaygoals -= self.team2pts
+        self.fixture.team1.team_stat.goals -= self.team1pts
+        self.fixture.team1.team_stat.goalsconceded -= self.team2pts
+        self.fixture.team2.team_stat.goals -= self.team2pts
+        self.fixture.team2.team_stat.goalsconceded -= self.team1pts
+        self.fixture.team1.team_stat.goaldifference = self.fixture.team1.team_stat.goals - self.fixture.team1.team_stat.goalsconceded
+        self.fixture.team2.team_stat.goaldifference = self.fixture.team2.team_stat.goals - self.fixture.team2.team_stat.goalsconceded
+        self.fixture.team1.team_stat.save()
+        self.fixture.team2.team_stat.save() 
 
 class GoalType(models.Model):
     typeid = models.AutoField(primary_key=True)
@@ -234,6 +262,13 @@ class GoalEvent(models.Model):
         player_stat.save()
         player_stat = self.assist_player.player_stat
         player_stat.numberofassists += 1
+        player_stat.save()
+    def remove_player_stats(self):
+        player_stat = self.player.player_stat
+        player_stat.numberofgoals -= 1
+        player_stat.save()
+        player_stat = self.assist_player.player_stat
+        player_stat.numberofassists -= 1
         player_stat.save()
 
 class Regulation(models.Model):

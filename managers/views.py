@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import CoachForm, CoachSearchForm
 from login.models import Coach, Team
+import re
 # Create your views here.
 def index(request):
     form = CoachSearchForm(request.GET)
@@ -103,7 +104,7 @@ def search_coach(request):
     coach_list = None
     if form.is_valid():
         coach_name = form.cleaned_data['coach_name']
-        coach_list = Coach.objects.filter(coach_name=coach_name)
+        coach_list = Coach.objects.filter(coach_name__iregex=r'^.*{}.*$'.format(re.escape(coach_name)))
     username = request.user.username
     user = request.user
     team_list = Team.objects.all()
