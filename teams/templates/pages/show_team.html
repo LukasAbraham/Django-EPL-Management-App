@@ -41,12 +41,13 @@
     </div>
 </br>
     <div class="container">
+        </br>
         <h3 class="display-4 font-select">Team</h3>
         <table class="table">
             <thead>
                 <tr>
-                    <th></th>
-                    <th>Name</th>
+                    <th>Icon </th>
+                    <th>Club</th>
                     <th>Country</th>
                     <th>Stadium</th>
                     <th>Sponsor</th>
@@ -58,20 +59,17 @@
                     <td>{{ team.team_name }}</td>
                     <td>{{ team.country }}</td>
                     <td>{{ team.stadium }}</td>
-                    <td></td>
+                    <td>
+                        <ul>
+                            {% for sponsor in team.sponsors_set.all %}
+                            <li> {{ sponsor.sponsor_name }} </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 </tr>
-                {% for sponsor in team.sponsors_set.all %}
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>{{ sponsor.sponsor_name }}</td>
-                </tr>
-                {% endfor %}
             </tbody>
         </table>
-        
+        </br>
         <h3 class="display-4 font-select">Coach</h3>
         <table class="table">
             <thead>
@@ -95,6 +93,7 @@
             </tbody>
         {% endif %}
         </table>
+        </br>
         <h3 class="display-4 font-select">Players</h3>
         <table class="table">
             <thead>

@@ -18,6 +18,8 @@ def index(request):
             fixture.status = Status.objects.get(statusname='Upcoming')
         fixture.save()
     fixture_list = fixture_list.order_by('-time')
+    round_list = Round.objects.all()
+    round_list = round_list.order_by('-round_name')
     username = request.user.username
     user = request.user
     context = {
@@ -25,6 +27,7 @@ def index(request):
         'team_list': team_list,
         'fixture_list': fixture_list,
         'user': user,
+        'round_list': round_list,
     }
     return render(request, 'pages/matches.html',context)
 
@@ -38,25 +41,44 @@ def schedule_form(request):
     if request.method == 'POST':
         formset = FixtureFormSet(request.POST)
         round_name_form = RoundNameForm(request.POST)
+        
         if formset.is_valid() and round_name_form.is_valid():
             round_name = round_name_form.cleaned_data['round_name']
             round_instance = Round(round_name=round_name)
             round_instance.save()
+            
+            all_forms_valid = True
+            
             for form in formset:
                 team1 = form.cleaned_data['team1']
                 team2 = form.cleaned_data['team2']
+                
                 if team1.status == 'NotMeetRequirement' or team2.status == 'NotMeetRequirement':
                     continue
+                
                 form.clean(selected_teams=selected_teams)
-                if form.is_valid():
+                selected_teams.append(team1)
+                selected_teams.append(team2)
+                if not form.is_valid():
+                    all_forms_valid = False
+                    break
+            
+            if all_forms_valid:
+                for form in formset:
+                    team1 = form.cleaned_data['team1']
+                    team2 = form.cleaned_data['team2']
+                    
+                    if team1.status == 'NotMeetRequirement' or team2.status == 'NotMeetRequirement':
+                        continue
+                    
                     team = Team.objects.get(team_name=team1.team_name)
                     fixture = form.save(commit=False)
                     fixture.round_name = round_instance
                     fixture.stadium = team.stadium
                     fixture.save()
-                selected_teams.append(team1)
-                selected_teams.append(team2)
-            return HttpResponseRedirect('/matches')
+                
+                return HttpResponseRedirect('/matches')
+        
     else:
         formset = FixtureFormSet()
         round_name_form = RoundNameForm()

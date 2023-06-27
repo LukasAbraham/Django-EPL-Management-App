@@ -62,13 +62,12 @@ class MatchForm(forms.ModelForm):
         time = cleaned_data.get('time')
         if team1 and team2:
             if team1 == team2:
-                self.add_error('team1', forms.ValidationError("Team 1 and Team 2 cannot be the same."))
-                self.add_error('team2', forms.ValidationError("Team 1 and Team 2 cannot be the same."))
+                raise forms.ValidationError("Team 1 and Team 2 cannot be the same.")
             if selected_teams is not None:
                 if team1 in selected_teams:
-                    raise ValidationError("Team 1 has already existed.")
+                    self.add_error('team1',"Team 1 has already existed.")
                 if team2 in selected_teams:
-                    raise ValidationError("Team 2 has already existed.")
+                    self.add_error('team2',"Team 2 has already existed.")
         if time:
             if time < timezone.now():
                 cleaned_data['status'] = Status.objects.get(statusname='Done')
