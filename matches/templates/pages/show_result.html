@@ -39,7 +39,15 @@
         <li><a href="/league">League</a></li>
         </ul>
     </div>
-    <div class="container">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+        }
+    </style>
+    </br>
+    <h3 class="display-4 text-center"> Match Detail </h3>
+    <div class="container-fluid">
+    </br>
         <table class="table">
             <thead>
                 <tr>
@@ -62,20 +70,14 @@
                 </tr>
                 {% if fixture.status.statusname == 'Done' %}
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <th>Goal Events</th>
-                    <td></td>
-                    <td></td>
+                    <th class="text-center" colspan="6">Goal Events</th>
                 </tr>
                 <tr>
                     <th>Scorer</th>
                     <th>Assist</th>
                     <th>Team</th>
                     <th>Goal Type</th>
-                    <th>Time</th>
-                    <th></th>
+                    <th colspan="2">Time</th>
                 </tr>
                 {% for goal_event in goal_events %}
                 <tr>
@@ -83,19 +85,19 @@
                     <td>{{goal_event.assist_player}}</td>
                     <td>{{goal_event.player.team}}</td>
                     <td>{{goal_event.goal_type}}</td>
-                    <td>{{goal_event.goal_time}}</td>
-                    <td></td>
-                    <td></td>
+                    <td colspan="2">{{goal_event.goal_time}}</td>
                 </tr>
                 {% endfor %}
                 {% endif %}
             </tbody>
     </table>
-    {% if user.user_profile.user_type == 'organizer' %}
-    <span class="text-info ml-2"><button class="btn btn-primary" onclick="location.href='{% url 'edit-fixture' fixture.fixtureid %}'">Edit</button></span>
-    <span class="text-info ml-3"><button class="btn btn-primary" onclick="matchconfirmDelete('{{ fixture.fixtureid }}')">Remove</button></span>
-    {% endif %}
-    <span class="text-info ml-4"><button onclick="location.href='/matches'" class="btn btn-secondary">Go back</button></span>
+    <div class="text-center">
+        {% if user.user_profile.user_type == 'organizer' %}
+        <span class="text-info ml-2"><button class="btn btn-primary" onclick="location.href='{% url 'edit-fixture' fixture.fixtureid %}'">Edit</button></span>
+        <span class="text-info ml-3"><button class="btn btn-primary" onclick="matchconfirmDelete('{{ fixture.fixtureid }}')">Remove</button></span>
+        {% endif %}
+        <span class="text-info ml-4"><button onclick="location.href='/matches'" class="btn btn-secondary">Go back</button></span>
+    </div>
     </div>
     <script>
         function matchconfirmDelete(matchId) {
