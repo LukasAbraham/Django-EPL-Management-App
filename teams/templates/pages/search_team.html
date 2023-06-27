@@ -50,28 +50,30 @@
         </form>
     </div>
     {% if teams %}
+</br></br>
     <h3 class="display-4 font-select"> All Clubs</h3>
 </br>
-    {% for team in teams %}
-    <div class="card">
-        <div class="card-header">
-            <span><img src="{{team.team_image.url}}" style="height:30px; width:30px; "></span>
-            <a href="{% url 'show-team' team.teamid %}">
-                <span class="font-weight-bold">{{team.team_name}}</span>
-            </a>
-            <span class="text-success font-weight-bold"> Manager: {{ team.coach.coach_name}}</span>
-            {% if user.user_profile.user_type == 'organizer' %}
-            <span class="float-right text-info"><button onclick="location.href='{% url 'delete-team' team_id=team.teamid %}'" class="btn btn-primary">Remove</button></span>
-            <span class="float-right text-info"><button onclick="location.href='{% url 'edit-team' team_id=team.teamid %}'" class="btn btn-primary">Edit</button></span>
-            {% endif %}
-            <span class="float-right text-info">&nbsp; Points: {{ team.team_stat.pts }}</span>
-            {% if user.user_profile.user_type == 'organizer' %}
-            <span class="float-right text-info">&nbsp; Status: {{ team.status }}</span>
-            {% endif %}
-        </div>
-        <br/>
+{% for team in teams %}
+<div class="card">
+    <div class="card-header">
+        <span><img src="{{team.team_image.url}}" style="height:30px;"></span>
+        &nbsp;
+        <a href="{% url 'show-team' team.teamid %}">
+            <span class="font-weight-bold">{{team.team_name}}</span>
+        </a>
+        <span class="text-success font-weight-bold">&nbsp;Manager: {{ team.coach.coach_name}}</span>
+        {% if user.user_profile.user_type == 'organizer' %}
+        <span class="float-right text-info ml-2"><button onclick="teamconfirmDelete('{{ team.teamid }}')" class="btn btn-secondary">Remove</button></span>
+        <span class="float-right text-info ml-3"><button onclick="location.href='{% url 'edit-team' team_id=team.teamid %}'" class="btn btn-secondary">Edit</button></span>
+        {% endif %}
+        <span class="float-right text-info">&nbsp; Points: {{ team.team_stat.pts }} &nbsp;</span>
+        {% if user.user_profile.user_type == 'organizer' %}
+        <span class="float-right text-info">&nbsp; Status: {{ team.status }}</span>
+        {% endif %}
     </div>
-    {% endfor %}
+    <br/>
+</div>
+{% endfor %}
     {% else %}
         <h3 class="display-4 font-select"> No clubs found.</h3>
     {% endif %}
