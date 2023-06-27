@@ -84,6 +84,13 @@
     </div>
     {% endif %}
 </div>
+<script>
+    function teamconfirmDelete(teamId) {
+        if (confirm("Are you confirm to remove this team?")) {
+            location.href = "/teams/team/delete/" + teamId + "/";
+        }
+    }
+</script>
 {% else %} 
     <script>
         window.location.replace("/login/");

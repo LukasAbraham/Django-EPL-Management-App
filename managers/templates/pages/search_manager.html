@@ -80,6 +80,13 @@
         </div>
         {% endif %}
     </div>
+    <script>
+        function managerconfirmDelete(coachId) {
+            if (confirm("Are you confirm to remove this manager?")) {
+                location.href = "/managers/manager/delete/" + coachId + "/";
+            }
+        }
+    </script>
 {% else %} 
     <script>
         window.location.replace("/login/");
