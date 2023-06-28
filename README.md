@@ -4,6 +4,8 @@
 
 <b> Description </b>: This is our repository for SE104's project
 
+<b> Topic </b>: National Football League Management
+
 <b> Subject </b>: Introduction to Software Engineering
 
 <b> Instructor </b>: Ms. Nguyen Thi Thanh Truc
